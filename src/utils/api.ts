@@ -1,7 +1,7 @@
 import { SessionInfo, SessionDetail, ScenarioData } from '../types/api';
 
-// API Configuration - Testing production URL with /api path
-const API_BASE_URL = 'https://os3-389-27987.vs.sakura.ne.jp:80/api';
+// API Configuration - Testing production URL with /api/trade path
+const API_BASE_URL = 'https://os3-389-27987.vs.sakura.ne.jp:80/api/trade';
 
 // Mock API data - used when API_BASE_URL is not configured
 const mockSessionsData: Record<string, SessionInfo[]> = {
