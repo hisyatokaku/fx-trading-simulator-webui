@@ -1,7 +1,7 @@
 import { SessionInfo, SessionDetail, ScenarioData } from '../types/api';
 
-// API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// API Configuration - Testing production URL
+const API_BASE_URL = 'http://os3-389-27987.vs.sakura.ne.jp';
 
 // Mock API data - used when API_BASE_URL is not configured
 const mockSessionsData: Record<string, SessionInfo[]> = {
@@ -247,6 +247,7 @@ export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> 
   if (API_BASE_URL) {
     // Use real API
     try {
+      console.log(`Making API request to: ${API_BASE_URL}/sessions/userId/${userId}`);
       return await makeApiRequest(`/sessions/userId/${userId}`);
     } catch (error) {
       console.error('API request failed, falling back to mock data:', error);
@@ -263,6 +264,7 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
   if (API_BASE_URL) {
     // Use real API
     try {
+      console.log(`Making API request to: ${API_BASE_URL}/session/sessionId/${sessionId}`);
       return await makeApiRequest(`/session/sessionId/${sessionId}`);
     } catch (error) {
       console.error('API request failed, falling back to mock data:', error);
@@ -283,6 +285,7 @@ export const fetchScenarioData = async (scenario: string): Promise<ScenarioData>
   if (API_BASE_URL) {
     // Use real API
     try {
+      console.log(`Making API request to: ${API_BASE_URL}/scenario/${scenario}`);
       return await makeApiRequest(`/scenario/${scenario}`);
     } catch (error) {
       console.error('API request failed, falling back to mock data:', error);
