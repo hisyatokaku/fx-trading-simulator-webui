@@ -1,12 +1,13 @@
 import React from 'react';
-import { SessionDetail } from '../types/api';
+import { SessionDetail, ScenarioData } from '../types/api';
 
 interface AssetTableProps {
   sessions: SessionDetail[];
+  scenarioData: ScenarioData | null;
   loading: boolean;
 }
 
-const AssetTable: React.FC<AssetTableProps> = ({ sessions, loading }) => {
+const AssetTable: React.FC<AssetTableProps> = ({ sessions, scenarioData, loading }) => {
   // Get the most recent 2 sessions
   const recentSessions = sessions.slice(-2);
   
@@ -27,6 +28,32 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, loading }) => {
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  };
+
+  // Calculate JPY equivalent total using FX rates
+  const calculateJPYEquivalentTotal = (balances: Record<string, number>, date: string) => {
+    if (!scenarioData || !scenarioData.dateToCurrencyPairToRate[date]) {
+      return null;
+    }
+
+    const rates = scenarioData.dateToCurrencyPairToRate[date];
+    let total = balances.JPY || 0;
+    
+    // Convert other currencies to JPY using FX rates
+    if (balances.USD && rates['USD/JPY']) {
+      total += balances.USD * rates['USD/JPY'];
+    }
+    if (balances.EUR && rates['EUR/JPY']) {
+      total += balances.EUR * rates['EUR/JPY'];
+    }
+    if (balances.AUD && rates['AUD/JPY']) {
+      total += balances.AUD * rates['AUD/JPY'];
+    }
+    if (balances.HKD && rates['HKD/JPY']) {
+      total += balances.HKD * rates['HKD/JPY'];
+    }
+    
+    return total;
   };
 
   if (loading) {
@@ -96,12 +123,17 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, loading }) => {
                         {currency}
                       </th>
                     ))}
+                    <th className="text-right py-3 px-4 font-medium text-slate-700 bg-blue-50">
+                      JPY Equivalent Total
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {sortedDates.map(date => {
                     const balances = session.dateToBalances[date];
                     if (!balances) return null;
+
+                    const jpyEquivalentTotal = calculateJPYEquivalentTotal(balances, date);
 
                     return (
                       <tr key={date} className="border-b border-slate-100 hover:bg-slate-50">
@@ -119,6 +151,15 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, loading }) => {
                             )}
                           </td>
                         ))}
+                        <td className="py-3 px-4 text-sm text-right font-semibold bg-blue-50">
+                          {jpyEquivalentTotal !== null ? (
+                            <span className="text-blue-900">
+                              {formatCurrency(jpyEquivalentTotal, 'JPY')}
+                            </span>
+                          ) : (
+                            <span className="text-slate-400">-</span>
+                          )}
+                        </td>
                       </tr>
                     );
                   })}

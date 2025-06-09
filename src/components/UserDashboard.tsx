@@ -226,7 +226,8 @@ const UserDashboard: React.FC = () => {
             {/* Asset Table Section */}
             <AssetTable
               sessions={sessionDetails}
-              loading={detailsLoading}
+              scenarioData={scenarioData}
+              loading={detailsLoading || scenarioLoading}
             />
           </div>
         </div>
