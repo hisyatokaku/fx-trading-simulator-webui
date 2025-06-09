@@ -1,8 +1,5 @@
 import { SessionInfo, SessionDetail, ScenarioData } from '../types/api';
 
-// API Configuration - Fixed port for HTTPS connection
-const API_BASE_URL = 'https://os3-389-27987.vs.sakura.ne.jp/api/trade';
-
 // Mock API data - used when API_BASE_URL is not configured
 const mockSessionsData: Record<string, SessionInfo[]> = {
   'user123': [
@@ -232,46 +229,13 @@ const mockScenarioData: Record<string, ScenarioData> = {
   }
 };
 
-// Helper function to make API requests
-const makeApiRequest = async (endpoint: string) => {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`);
-  
-  if (!response.ok) {
-    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-  }
-  
-  return response.json();
-};
-
 export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> => {
-  if (API_BASE_URL) {
-    // Use real API
-    try {
-      console.log(`Making API request to: ${API_BASE_URL}/sessions/userId/${userId}`);
-      return await makeApiRequest(`/sessions/userId/${userId}`);
-    } catch (error) {
-      console.error('API request failed, falling back to mock data:', error);
-      // Fall back to mock data if API fails
-    }
-  }
-  
   // Use mock data
   await new Promise(resolve => setTimeout(resolve, 300));
   return mockSessionsData[userId] || [];
 };
 
 export const fetchSessionDetail = async (sessionId: number): Promise<SessionDetail> => {
-  if (API_BASE_URL) {
-    // Use real API
-    try {
-      console.log(`Making API request to: ${API_BASE_URL}/session/sessionId/${sessionId}`);
-      return await makeApiRequest(`/session/sessionId/${sessionId}`);
-    } catch (error) {
-      console.error('API request failed, falling back to mock data:', error);
-      // Fall back to mock data if API fails
-    }
-  }
-  
   // Use mock data
   await new Promise(resolve => setTimeout(resolve, 200));
   const detail = mockSessionDetails[sessionId];
@@ -282,17 +246,6 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
 };
 
 export const fetchScenarioData = async (scenario: string): Promise<ScenarioData> => {
-  if (API_BASE_URL) {
-    // Use real API
-    try {
-      console.log(`Making API request to: ${API_BASE_URL}/scenario/${scenario}`);
-      return await makeApiRequest(`/scenario/${scenario}`);
-    } catch (error) {
-      console.error('API request failed, falling back to mock data:', error);
-      // Fall back to mock data if API fails
-    }
-  }
-  
   // Use mock data
   await new Promise(resolve => setTimeout(resolve, 200));
   const data = mockScenarioData[scenario];
