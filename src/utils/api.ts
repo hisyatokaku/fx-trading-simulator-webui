@@ -1,7 +1,7 @@
 import { SessionInfo, SessionDetail, ScenarioData } from '../types/api';
 
 // API Configuration - Testing production URL with /api path
-const API_BASE_URL = 'https://cors-anywhere.herokuapp.com/http://os3-389-27987.vs.sakura.ne.jp/api';
+const API_BASE_URL = 'https://os3-389-27987.vs.sakura.ne.jp:80/api';
 
 // Mock API data - used when API_BASE_URL is not configured
 const mockSessionsData: Record<string, SessionInfo[]> = {
@@ -234,11 +234,7 @@ const mockScenarioData: Record<string, ScenarioData> = {
 
 // Helper function to make API requests
 const makeApiRequest = async (endpoint: string) => {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-    }
-  });
+  const response = await fetch(`${API_BASE_URL}${endpoint}`);
   
   if (!response.ok) {
     throw new Error(`API request failed: ${response.status} ${response.statusText}`);
