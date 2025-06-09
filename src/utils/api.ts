@@ -1,7 +1,7 @@
 import { SessionInfo, SessionDetail, ScenarioData } from '../types/api';
 
-// API Configuration - Using CORS proxy for HTTP access
-const API_BASE_URL = 'https://cors-anywhere.herokuapp.com/http://os3-389-27987.vs.sakura.ne.jp';
+// API Configuration - Testing production URL with /api path
+const API_BASE_URL = 'https://cors-anywhere.herokuapp.com/http://os3-389-27987.vs.sakura.ne.jp/api';
 
 // Mock API data - used when API_BASE_URL is not configured
 const mockSessionsData: Record<string, SessionInfo[]> = {
