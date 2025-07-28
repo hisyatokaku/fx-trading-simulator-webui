@@ -230,27 +230,77 @@ const mockScenarioData: Record<string, ScenarioData> = {
 };
 
 export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> => {
-  // Use mock data
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return mockSessionsData[userId] || [];
+  // Use mock data for user123
+  if (userId === 'user123') {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return mockSessionsData[userId] || [];
+  }
+  
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  
+  if (apiBaseUrl) {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/sessions/${userId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.warn('Failed to fetch from backend, falling back to empty array:', error);
+      return [];
+    }
+  }
+  
+  // No backend configured
+  return [];
 };
 
 export const fetchSessionDetail = async (sessionId: number): Promise<SessionDetail> => {
-  // Use mock data
-  await new Promise(resolve => setTimeout(resolve, 200));
-  const detail = mockSessionDetails[sessionId];
-  if (!detail) {
-    throw new Error(`Session ${sessionId} not found`);
+  // Use mock data for specific session IDs (user123's sessions)
+  if (mockSessionDetails[sessionId]) {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return mockSessionDetails[sessionId];
   }
-  return detail;
+  
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  
+  if (apiBaseUrl) {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/sessions/detail/${sessionId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.warn('Failed to fetch from backend:', error);
+      throw new Error(`Session ${sessionId} not found`);
+    }
+  }
+  
+  throw new Error(`Session ${sessionId} not found`);
 };
 
 export const fetchScenarioData = async (scenario: string): Promise<ScenarioData> => {
-  // Use mock data
-  await new Promise(resolve => setTimeout(resolve, 200));
-  const data = mockScenarioData[scenario];
-  if (!data) {
-    throw new Error(`Scenario ${scenario} not found`);
+  // Use mock data for specific scenarios (user123's scenarios)
+  if (mockScenarioData[scenario]) {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return mockScenarioData[scenario];
   }
-  return data;
+  
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  
+  if (apiBaseUrl) {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/scenarios/${scenario}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.warn('Failed to fetch from backend:', error);
+      throw new Error(`Scenario ${scenario} not found`);
+    }
+  }
+  
+  throw new Error(`Scenario ${scenario} not found`);
 };
