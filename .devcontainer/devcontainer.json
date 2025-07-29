@@ -3,13 +3,11 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
-
   "customizations": {
     "vscode": {
       "extensions": [
@@ -45,12 +43,14 @@
       }
     }
   },
-
   "containerEnv": {
     "VITE_API_BASE_URL": "http://localhost:8080"
   },
-
-  "forwardPorts": [5173, 4173, 3000],
+  "forwardPorts": [
+    5173,
+    4173,
+    3000
+  ],
   "portsAttributes": {
     "5173": {
       "label": "Vite Dev Server",
@@ -65,10 +65,7 @@
       "onAutoForward": "notify"
     }
   },
-
   "postCreateCommand": "npm install",
-  
-  "postStartCommand": "echo 'Welcome to FX Trading Simulator WebUI Development Environment!'",
-
+  "postStartCommand": "echo 'Welcome to FX Trading Simulator WebUI Development Environment!' && npm run dev",
   "remoteUser": "node"
 }
