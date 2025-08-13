@@ -240,7 +240,7 @@ export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> 
   
   if (apiBaseUrl) {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/sessions/${userId}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/sessions/userId/${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -264,9 +264,8 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
   
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   
-  if (apiBaseUrl) {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/sessions/detail/${sessionId}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/session/sessionId/${sessionId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -275,9 +274,7 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
       console.warn('Failed to fetch from backend:', error);
       throw new Error(`Session ${sessionId} not found`);
     }
-  }
   
-  throw new Error(`Session ${sessionId} not found`);
 };
 
 export const fetchScenarioData = async (scenario: string): Promise<ScenarioData> => {
@@ -291,7 +288,7 @@ export const fetchScenarioData = async (scenario: string): Promise<ScenarioData>
   
   if (apiBaseUrl) {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/scenarios/${scenario}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/scenario/${scenario}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
