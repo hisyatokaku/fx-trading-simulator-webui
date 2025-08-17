@@ -238,9 +238,10 @@ export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> 
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  if (apiBaseUrl) {
+  // Check if API base URL is configured (empty string means use relative path)
+  if (apiBaseUrl !== undefined) {
     try {
-      // Use direct URL (CORS needs to be configured on backend)
+      // Use API base URL (empty string = relative path for Netlify proxy)
       const response = await fetch(`${apiBaseUrl}/api/trade/sessions/userId/${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -265,8 +266,8 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  if (apiBaseUrl) {
-
+  // Check if API base URL is configured (empty string means use relative path)
+  if (apiBaseUrl !== undefined) {
     try {
       const response = await fetch(`${apiBaseUrl}/api/trade/session/sessionId/${sessionId}`);
       if (!response.ok) {
@@ -291,9 +292,10 @@ export const fetchScenarioData = async (scenario: string): Promise<ScenarioData>
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  if (apiBaseUrl) {
+  // Check if API base URL is configured (empty string means use relative path)
+  if (apiBaseUrl !== undefined) {
     try {
-      // Use direct URL (CORS needs to be configured on backend)
+      // Use API base URL (empty string = relative path for Netlify proxy)
       const response = await fetch(`${apiBaseUrl}/api/trade/scenario/${scenario}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

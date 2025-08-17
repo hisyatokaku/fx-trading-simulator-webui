@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Generated files
+*.min.js
+*.min.css
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+.cache/
+.parcel-cache/
+.temp/
+.tmp/
+
+# Documentation
+CHANGELOG.md
+
+# Config files that should maintain their formatting
+.devcontainer/
