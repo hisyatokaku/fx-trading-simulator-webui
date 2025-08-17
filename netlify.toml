@@ -1,0 +1,17 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# API プロキシ設定 - HTTPSからHTTPのバックエンドへ
+[[redirects]]
+  from = "/api/*"
+  to = "http://os3-389-27987.vs.sakura.ne.jp:8080/api/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify"}
+
+# SPA用のルーティング
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
