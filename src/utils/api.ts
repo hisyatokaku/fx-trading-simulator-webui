@@ -235,12 +235,14 @@ export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> 
     await new Promise(resolve => setTimeout(resolve, 300));
     return mockSessionsData[userId] || [];
   }
-  
+
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  
+
   if (apiBaseUrl) {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/sessions/${userId}`);
+      // Use direct URL (CORS needs to be configured on backend)
+      const baseUrl = apiBaseUrl;
+      const response = await fetch(`${baseUrl}/api/trade/sessions/userId/${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -250,7 +252,7 @@ export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> 
       return [];
     }
   }
-  
+
   // No backend configured
   return [];
 };
@@ -261,12 +263,14 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
     await new Promise(resolve => setTimeout(resolve, 200));
     return mockSessionDetails[sessionId];
   }
-  
+
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  
+
   if (apiBaseUrl) {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/sessions/detail/${sessionId}`);
+      // Use direct URL (CORS needs to be configured on backend)
+      const baseUrl = apiBaseUrl;
+      const response = await fetch(`${baseUrl}/api/trade/session/sessionId/${sessionId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -276,7 +280,7 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
       throw new Error(`Session ${sessionId} not found`);
     }
   }
-  
+
   throw new Error(`Session ${sessionId} not found`);
 };
 
@@ -286,12 +290,14 @@ export const fetchScenarioData = async (scenario: string): Promise<ScenarioData>
     await new Promise(resolve => setTimeout(resolve, 200));
     return mockScenarioData[scenario];
   }
-  
+
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  
+
   if (apiBaseUrl) {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/scenarios/${scenario}`);
+      // Use direct URL (CORS needs to be configured on backend)
+      const baseUrl = apiBaseUrl;
+      const response = await fetch(`${baseUrl}/api/trade/scenario/${scenario}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -301,6 +307,6 @@ export const fetchScenarioData = async (scenario: string): Promise<ScenarioData>
       throw new Error(`Scenario ${scenario} not found`);
     }
   }
-  
+
   throw new Error(`Scenario ${scenario} not found`);
 };
