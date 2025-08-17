@@ -2,10 +2,10 @@
   publish = "dist"
   command = "npm run build"
 
-# API プロキシ設定 - HTTPSからHTTPのバックエンドへ
+# API プロキシ設定 - HTTPSからHTTPのバックエンドへ（ポート80）
 [[redirects]]
   from = "/api/*"
-  to = "http://os3-389-27987.vs.sakura.ne.jp:8080/api/:splat"
+  to = "http://os3-389-27987.vs.sakura.ne.jp/api/:splat"
   status = 200
   force = true
   headers = {X-From = "Netlify"}
