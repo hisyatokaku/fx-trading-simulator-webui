@@ -241,8 +241,7 @@ export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> 
   if (apiBaseUrl) {
     try {
       // Use direct URL (CORS needs to be configured on backend)
-      const baseUrl = apiBaseUrl;
-      const response = await fetch(`${baseUrl}/api/trade/sessions/userId/${userId}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/sessions/userId/${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -267,10 +266,9 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   if (apiBaseUrl) {
+
     try {
-      // Use direct URL (CORS needs to be configured on backend)
-      const baseUrl = apiBaseUrl;
-      const response = await fetch(`${baseUrl}/api/trade/session/sessionId/${sessionId}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/session/sessionId/${sessionId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -296,8 +294,7 @@ export const fetchScenarioData = async (scenario: string): Promise<ScenarioData>
   if (apiBaseUrl) {
     try {
       // Use direct URL (CORS needs to be configured on backend)
-      const baseUrl = apiBaseUrl;
-      const response = await fetch(`${baseUrl}/api/trade/scenario/${scenario}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/scenario/${scenario}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
