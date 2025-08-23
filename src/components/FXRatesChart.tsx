@@ -19,6 +19,29 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
   const hiddenScenarios = ['Feb_Apr_2017', 'Jun_Aug_2017', 'Feb_Apr_2017_wit_commission'];
   const shouldHideRates = selectedScenario && hiddenScenarios.includes(selectedScenario);
 
+  // Helper function to extract the quote currency (after /) from currency pair
+  const getQuoteCurrency = (currencyPair: string): string => {
+    return currencyPair.split('/')[1] || '';
+  };
+
+  // Sort currency pairs with JPY pairs first, then by quote currency
+  const sortCurrencyPairs = (pairs: string[]): string[] => {
+    return pairs.sort((a, b) => {
+      const quoteCurrencyA = getQuoteCurrency(a);
+      const quoteCurrencyB = getQuoteCurrency(b);
+      
+      // JPY pairs come first
+      if (quoteCurrencyA === 'JPY' && quoteCurrencyB !== 'JPY') return -1;
+      if (quoteCurrencyA !== 'JPY' && quoteCurrencyB === 'JPY') return 1;
+      
+      // Sort by quote currency, then by full pair name if quote currencies are equal
+      if (quoteCurrencyA === quoteCurrencyB) {
+        return a.localeCompare(b);
+      }
+      return quoteCurrencyA.localeCompare(quoteCurrencyB);
+    });
+  };
+
   // Get all available currency pairs
   const availablePairs = React.useMemo(() => {
     if (!scenarioData || shouldHideRates) return [];
@@ -28,7 +51,7 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
       Object.keys(rates).forEach(pair => pairs.add(pair));
     });
     
-    return Array.from(pairs).sort();
+    return sortCurrencyPairs(Array.from(pairs));
   }, [scenarioData, shouldHideRates]);
 
   // Prepare chart data
