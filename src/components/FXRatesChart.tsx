@@ -51,6 +51,37 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
     });
   }, [scenarioData, selectedPairs, shouldHideRates]);
 
+  // Calculate Y-axis domain with 10% margin
+  const yAxisDomain = React.useMemo(() => {
+    if (chartData.length === 0 || selectedPairs.length === 0) {
+      return ['dataMin', 'dataMax'];
+    }
+
+    let min = Infinity;
+    let max = -Infinity;
+
+    chartData.forEach(dataPoint => {
+      selectedPairs.forEach(pair => {
+        const value = dataPoint[pair];
+        if (typeof value === 'number') {
+          min = Math.min(min, value);
+          max = Math.max(max, value);
+        }
+      });
+    });
+
+    if (min === Infinity || max === -Infinity) {
+      return ['dataMin', 'dataMax'];
+    }
+
+    const range = max - min;
+    const margin = range * 0.1;
+    const domainMin = Math.floor(min - margin);
+    const domainMax = Math.ceil(max + margin);
+
+    return [domainMin, domainMax];
+  }, [chartData, selectedPairs]);
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
       month: 'short',
@@ -174,6 +205,7 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
                 fontSize={12}
               />
               <YAxis 
+                domain={yAxisDomain}
                 tickFormatter={formatRate}
                 stroke="#64748b"
                 fontSize={12}
