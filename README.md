@@ -1,8 +1,9 @@
 # Project
 
-Google Colab - https://colab.research.google.com/drive/1srkCLVcUJCL0uotRwqD2uTO6iMt1Az2Z?usp=sharing
+Google Colab - https://colab.research.google.com/drive/1jhmx739GbguQnmwwpAgkfoBix9mcRycw?usp=sharing
 
-Netlify - https://fx-trading-simulator-webui.netlify.app/
+UI PoC- https://fx-trading-simulator-webui.netlify.app/
+UI 本番環境: https://fxapp.netlify.app/
 
 WEB service - https://github.com/henohenotsuyoshi/fx-trading-simulator-api
 
