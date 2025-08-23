@@ -219,6 +219,7 @@ const UserDashboard: React.FC = () => {
                 <FXRatesChart 
                   scenarioData={scenarioData}
                   loading={scenarioLoading}
+                  selectedScenario={selectedScenario}
                 />
               </div>
             </div>

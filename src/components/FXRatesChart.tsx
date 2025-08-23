@@ -6,17 +6,22 @@ import { Check, ChevronDown } from 'lucide-react';
 interface FXRatesChartProps {
   scenarioData: ScenarioData | null;
   loading: boolean;
+  selectedScenario: string | null;
 }
 
-const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading }) => {
+const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, selectedScenario }) => {
   const [selectedPairs, setSelectedPairs] = useState<string[]>(['USD/JPY', 'EUR/JPY']);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
 
+  // Check if current scenario should hide FX rates
+  const hiddenScenarios = ['Feb_Apr_2017', 'Jun_Aug_2017', 'Feb_Apr_2017_wit_commission'];
+  const shouldHideRates = selectedScenario && hiddenScenarios.includes(selectedScenario);
+
   // Get all available currency pairs
   const availablePairs = React.useMemo(() => {
-    if (!scenarioData) return [];
+    if (!scenarioData || shouldHideRates) return [];
     
     const pairs = new Set<string>();
     Object.values(scenarioData.dateToCurrencyPairToRate).forEach(rates => {
@@ -24,11 +29,11 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading }) =>
     });
     
     return Array.from(pairs).sort();
-  }, [scenarioData]);
+  }, [scenarioData, shouldHideRates]);
 
   // Prepare chart data
   const chartData = React.useMemo(() => {
-    if (!scenarioData) return [];
+    if (!scenarioData || shouldHideRates) return [];
 
     const sortedDates = Object.keys(scenarioData.dateToCurrencyPairToRate).sort();
 
@@ -44,7 +49,7 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading }) =>
 
       return dataPoint;
     });
-  }, [scenarioData, selectedPairs]);
+  }, [scenarioData, selectedPairs, shouldHideRates]);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -79,14 +84,21 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading }) =>
   }
 
   if (!scenarioData || chartData.length === 0) {
+    const message = shouldHideRates 
+      ? "No FX rates displayed for evaluation scenario"
+      : "No FX rates data";
+    const subMessage = shouldHideRates 
+      ? ""
+      : "Select a scenario to view rates";
+
     return (
       <div className="h-96 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center mb-4">
             <div className="w-8 h-8 border-2 border-slate-300 rounded"></div>
           </div>
-          <p className="text-slate-600 mb-2">No FX rates data</p>
-          <p className="text-sm text-slate-500">Select a scenario to view rates</p>
+          <p className="text-slate-600 mb-2">{message}</p>
+          {subMessage && <p className="text-sm text-slate-500">{subMessage}</p>}
         </div>
       </div>
     );
