@@ -63,6 +63,37 @@ const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loa
     });
   }, [sessions, scenarioData]);
 
+  // Calculate Y-axis domain with 10% margin and round to nearest 1000
+  const yAxisDomain = React.useMemo(() => {
+    if (chartData.length === 0 || sessions.length === 0) {
+      return ['dataMin', 'dataMax'];
+    }
+
+    let min = Infinity;
+    let max = -Infinity;
+
+    chartData.forEach(dataPoint => {
+      sessions.forEach(session => {
+        const value = dataPoint[`Session ${session.sessionId}`];
+        if (typeof value === 'number') {
+          min = Math.min(min, value);
+          max = Math.max(max, value);
+        }
+      });
+    });
+
+    if (min === Infinity || max === -Infinity) {
+      return ['dataMin', 'dataMax'];
+    }
+
+    const range = max - min;
+    const margin = range * 0.1;
+    const domainMin = Math.floor((min - margin) / 1000) * 1000;
+    const domainMax = Math.ceil((max + margin) / 1000) * 1000;
+
+    return [domainMin, domainMax];
+  }, [chartData, sessions]);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('ja-JP', {
       style: 'currency',
@@ -116,6 +147,7 @@ const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loa
             fontSize={12}
           />
           <YAxis 
+            domain={yAxisDomain}
             tickFormatter={(value) => `¥${(value / 1000).toFixed(0)}K`}
             stroke="#64748b"
             fontSize={12}
