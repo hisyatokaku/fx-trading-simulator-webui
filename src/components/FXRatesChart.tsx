@@ -16,8 +16,7 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
   const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
 
   // Check if current scenario should hide FX rates
-  // const hiddenScenarios = ['Feb_Apr_2017', 'Jun_Aug_2017', 'Feb_Apr_2017_wit_commission'];
-  const hiddenScenarios = [''];
+  const hiddenScenarios = ['Feb_Apr_2017', 'Jun_Aug_2017'];
   const shouldHideRates = selectedScenario && hiddenScenarios.includes(selectedScenario);
 
   // Helper function to extract the quote currency (after /) from currency pair
