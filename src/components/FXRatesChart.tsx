@@ -16,7 +16,8 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
   const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
 
   // Check if current scenario should hide FX rates
-  const hiddenScenarios = ['Feb_Apr_2017', 'Jun_Aug_2017', 'Feb_Apr_2017_wit_commission'];
+  // const hiddenScenarios = ['Feb_Apr_2017', 'Jun_Aug_2017', 'Feb_Apr_2017_wit_commission'];
+  const hiddenScenarios = [''];
   const shouldHideRates = selectedScenario && hiddenScenarios.includes(selectedScenario);
 
   // Helper function to extract the quote currency (after /) from currency pair
@@ -29,11 +30,11 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
     return pairs.sort((a, b) => {
       const quoteCurrencyA = getQuoteCurrency(a);
       const quoteCurrencyB = getQuoteCurrency(b);
-      
+
       // JPY pairs come first
       if (quoteCurrencyA === 'JPY' && quoteCurrencyB !== 'JPY') return -1;
       if (quoteCurrencyA !== 'JPY' && quoteCurrencyB === 'JPY') return 1;
-      
+
       // Sort by quote currency, then by full pair name if quote currencies are equal
       if (quoteCurrencyA === quoteCurrencyB) {
         return a.localeCompare(b);
@@ -45,12 +46,12 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
   // Get all available currency pairs
   const availablePairs = React.useMemo(() => {
     if (!scenarioData || shouldHideRates) return [];
-    
+
     const pairs = new Set<string>();
     Object.values(scenarioData.dateToCurrencyPairToRate).forEach(rates => {
       Object.keys(rates).forEach(pair => pairs.add(pair));
     });
-    
+
     return sortCurrencyPairs(Array.from(pairs));
   }, [scenarioData, shouldHideRates]);
 
@@ -63,7 +64,7 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
     return sortedDates.map(date => {
       const dataPoint: any = { date };
       const rates = scenarioData.dateToCurrencyPairToRate[date];
-      
+
       selectedPairs.forEach(pair => {
         if (rates[pair] !== undefined) {
           dataPoint[pair] = rates[pair];
@@ -138,10 +139,10 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
   }
 
   if (!scenarioData || chartData.length === 0) {
-    const message = shouldHideRates 
+    const message = shouldHideRates
       ? "No FX rates displayed for evaluation scenario"
       : "No FX rates data";
-    const subMessage = shouldHideRates 
+    const subMessage = shouldHideRates
       ? ""
       : "Select a scenario to view rates";
 
@@ -167,8 +168,8 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
           className="flex items-center justify-between w-full px-4 py-2 text-left bg-white border border-slate-300 rounded-lg hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <span className="text-sm text-slate-700">
-            {selectedPairs.length === 0 
-              ? 'Select currency pairs' 
+            {selectedPairs.length === 0
+              ? 'Select currency pairs'
               : `${selectedPairs.length} pair${selectedPairs.length > 1 ? 's' : ''} selected`
             }
           </span>
@@ -190,11 +191,10 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
                       onChange={() => handlePairToggle(pair)}
                       className="sr-only"
                     />
-                    <div className={`w-4 h-4 border-2 rounded flex items-center justify-center ${
-                      selectedPairs.includes(pair) 
-                        ? 'bg-blue-600 border-blue-600' 
-                        : 'border-slate-300'
-                    }`}>
+                    <div className={`w-4 h-4 border-2 rounded flex items-center justify-center ${selectedPairs.includes(pair)
+                      ? 'bg-blue-600 border-blue-600'
+                      : 'border-slate-300'
+                      }`}>
                       {selectedPairs.includes(pair) && (
                         <Check className="h-3 w-3 text-white" />
                       )}
@@ -221,13 +221,13 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis 
-                dataKey="date" 
+              <XAxis
+                dataKey="date"
                 tickFormatter={formatDate}
                 stroke="#64748b"
                 fontSize={12}
               />
-              <YAxis 
+              <YAxis
                 domain={yAxisDomain}
                 tickFormatter={formatRate}
                 stroke="#64748b"
