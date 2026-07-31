@@ -48,4 +48,3 @@ VITE_API_BASE_URL=""
 - **本番**: `VITE_API_BASE_URL=""`（Netlifyプロキシ経由）
 
 詳細な設定情報は`CLAUDE.md`を参照してください。
-
