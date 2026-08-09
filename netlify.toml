@@ -5,7 +5,7 @@
 # API プロキシ設定 - HTTPSからHTTPのバックエンドへ（ポート80）
 [[redirects]]
   from = "/api/*"
-  to = "http://os3-389-27987.vs.sakura.ne.jp/api/:splat"
+  to = "http://34.146.231.219:8000/api/:splat"
   status = 200
   force = true
   headers = {X-From = "Netlify"}

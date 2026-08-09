@@ -31,15 +31,15 @@ VITE_API_BASE_URL=""
 ```toml
 [[redirects]]
   from = "/api/*"
-  to = "http://os3-389-27987.vs.sakura.ne.jp/api/:splat"
+  to = "http://34.146.231.219:8000/api/:splat"
   status = 200
   force = true
 ```
 
 ### バックエンドサーバー
-- **URL**: `http://os3-389-27987.vs.sakura.ne.jp`
+- **URL**: `http://34.146.231.219:8000`
 - **Port**: 80（HTTPS→HTTPプロキシ）
-- **API Documentation**: https://os3-389-27987.vs.sakura.ne.jp/swagger-ui/index.html
+- **API Documentation**: http://34.146.231.219:8000/docs
 
 ## APIの使い分け（src/utils/api.ts）
 ```typescript
