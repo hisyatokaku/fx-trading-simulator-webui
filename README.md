@@ -1,14 +1,9 @@
 # Project
 
-Google Colab - https://colab.research.google.com/drive/1jhmx739GbguQnmwwpAgkfoBix9mcRycw?usp=sharing
-
-UI PoC- https://fx-trading-simulator-webui.netlify.app/
-UI 本番環境: https://fxapp.netlify.app/
-
-WEB service - https://github.com/henohenotsuyoshi/fx-trading-simulator-api
-
-API swagger - https://os3-389-27987.vs.sakura.ne.jp/swagger-ui/index.html
-
+- Google Colab: https://colab.research.google.com/drive/1jhmx739GbguQnmwwpAgkfoBix9mcRycw?usp=sharing
+- UI 本番環境: https://fxapp.netlify.app/
+- UI PoC- https://fx-trading-simulator-webui.netlify.app/
+- WEB service - https://github.com/hisyatokaku/fx-trading-simulator-api/
 
 ![image](https://github.com/user-attachments/assets/031eb116-521e-46d0-a1a9-abe25b065feb)
 
@@ -39,8 +34,8 @@ VITE_API_BASE_URL=""
 ※空文字により相対パス（`/api/*`）でNetlifyプロキシを使用
 
 ## バックエンドAPI
-- **API URL**: http://os3-389-27987.vs.sakura.ne.jp
-- **Swagger UI**: https://os3-389-27987.vs.sakura.ne.jp/swagger-ui/index.html
+- **API URL**: http://34.146.231.219:8000
+- **Swagger UI**: http://34.146.231.219:8000/docs
 - **プロキシ設定**: `netlify.toml`でHTTPS→HTTPプロキシ
 
 ## 環境の使い分け
