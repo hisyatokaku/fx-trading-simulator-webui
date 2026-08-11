@@ -1,6 +1,7 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { SessionDetail, ScenarioData } from '../types/api';
+import { calculateJPYEquivalent, formatCurrency } from '../utils/currency';
 
 interface SessionChartProps {
   sessions: SessionDetail[];
@@ -10,27 +11,6 @@ interface SessionChartProps {
 
 const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loading }) => {
   const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-
-  // Calculate JPY equivalent balance using FX rates
-  const calculateJPYEquivalent = (balances: Record<string, number>, rates: Record<string, number>) => {
-    let total = balances.JPY || 0;
-    
-    // Convert other currencies to JPY
-    if (balances.USD && rates['USD/JPY']) {
-      total += balances.USD * rates['USD/JPY'];
-    }
-    if (balances.EUR && rates['EUR/JPY']) {
-      total += balances.EUR * rates['EUR/JPY'];
-    }
-    if (balances.AUD && rates['AUD/JPY']) {
-      total += balances.AUD * rates['AUD/JPY'];
-    }
-    if (balances.HKD && rates['HKD/JPY']) {
-      total += balances.HKD * rates['HKD/JPY'];
-    }
-    
-    return total;
-  };
 
   // Prepare chart data
   const chartData = React.useMemo(() => {
@@ -47,7 +27,7 @@ const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loa
 
     // Create data points for each date
     return sortedDates.map(date => {
-      const dataPoint: any = { date };
+      const dataPoint: Record<string, string | number> = { date };
       
       sessions.forEach(session => {
         const balances = session.dateToBalances[date];
@@ -93,15 +73,6 @@ const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loa
 
     return [domainMin, domainMax];
   }, [chartData, sessions]);
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('ja-JP', {
-      style: 'currency',
-      currency: 'JPY',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -154,7 +125,7 @@ const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loa
           />
           <Tooltip
             formatter={(value: number, name: string) => [
-              formatCurrency(value),
+              formatCurrency(value, 'JPY'),
               name
             ]}
             labelFormatter={(label) => `Date: ${formatDate(label)}`}
