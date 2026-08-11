@@ -242,11 +242,26 @@ export const fetchUserSessions = async (userId: string): Promise<SessionInfo[]> 
   if (apiBaseUrl !== undefined) {
     try {
       // Use API base URL (empty string = relative path for Netlify proxy)
-      const response = await fetch(`${apiBaseUrl}/api/trade/sessions/userId/${userId}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/sessions/${encodeURIComponent(userId)}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return await response.json();
+      const data = await response.json();
+      return data.sessions.map((session: {
+        id: number;
+        start_datetime: string;
+        end_datetime: string;
+        jpy_balance: number | null;
+        scenario_name: string | null;
+        is_complete: boolean;
+      }) => ({
+        sessionId: session.id,
+        startDate: session.start_datetime,
+        endDate: session.end_datetime,
+        jpyBalance: session.jpy_balance ?? 0,
+        scenario: session.scenario_name ?? '',
+        complete: session.is_complete,
+      }));
     } catch (error) {
       console.warn('Failed to fetch from backend, falling back to empty array:', error);
       return [];
@@ -269,11 +284,32 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
   // Check if API base URL is configured (empty string means use relative path)
   if (apiBaseUrl !== undefined) {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/trade/session/sessionId/${sessionId}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/session/${sessionId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return await response.json();
+      const session: {
+        id: number;
+        start_datetime: string;
+        end_datetime: string;
+        current_datetime: string;
+        jpy_balance: number | null;
+        scenario_name: string | null;
+        balances: Record<string, number>;
+        is_complete: boolean;
+      } = await response.json();
+
+      return {
+        sessionId: session.id,
+        startDate: session.start_datetime,
+        endDate: session.end_datetime,
+        jpyBalance: session.jpy_balance ?? 0,
+        scenario: session.scenario_name ?? '',
+        dateToBalances: {
+          [session.current_datetime]: session.balances,
+        },
+        complete: session.is_complete,
+      };
     } catch (error) {
       console.warn('Failed to fetch from backend:', error);
       throw new Error(`Session ${sessionId} not found`);
