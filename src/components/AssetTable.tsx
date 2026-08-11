@@ -1,5 +1,6 @@
 import React from 'react';
 import { SessionDetail, ScenarioData } from '../types/api';
+import { calculateJPYEquivalent, formatCurrency, SUPPORTED_CURRENCIES } from '../utils/currency';
 
 interface AssetTableProps {
   sessions: SessionDetail[];
@@ -11,20 +12,6 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, scenarioData, loading
   // Get the most recent 2 sessions
   const recentSessions = sessions.slice(-2);
   
-  const currencies = ['JPY', 'USD', 'EUR', 'AUD', 'HKD'];
-
-  const formatCurrency = (amount: number, currency: string) => {
-    const formatters = {
-      JPY: (val: number) => `¥${val.toLocaleString('ja-JP', { maximumFractionDigits: 0 })}`,
-      USD: (val: number) => `$${val.toFixed(2)}`,
-      EUR: (val: number) => `€${val.toFixed(2)}`,
-      AUD: (val: number) => `A$${val.toFixed(2)}`,
-      HKD: (val: number) => `HK$${val.toFixed(2)}`,
-    };
-    
-    return formatters[currency as keyof typeof formatters]?.(amount) || `${amount.toFixed(2)}`;
-  };
-
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -36,24 +23,10 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, scenarioData, loading
       return null;
     }
 
-    const rates = scenarioData.dateToCurrencyPairToRate[date];
-    let total = balances.JPY || 0;
-    
-    // Convert other currencies to JPY using FX rates
-    if (balances.USD && rates['USD/JPY']) {
-      total += balances.USD * rates['USD/JPY'];
-    }
-    if (balances.EUR && rates['EUR/JPY']) {
-      total += balances.EUR * rates['EUR/JPY'];
-    }
-    if (balances.AUD && rates['AUD/JPY']) {
-      total += balances.AUD * rates['AUD/JPY'];
-    }
-    if (balances.HKD && rates['HKD/JPY']) {
-      total += balances.HKD * rates['HKD/JPY'];
-    }
-    
-    return total;
+    return calculateJPYEquivalent(
+      balances,
+      scenarioData.dateToCurrencyPairToRate[date],
+    );
   };
 
   if (loading) {
@@ -102,7 +75,7 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, scenarioData, loading
       </div>
 
       <div className="space-y-8">
-        {recentSessions.map((session, sessionIndex) => (
+        {recentSessions.map(session => (
           <div key={session.sessionId}>
             <div className="flex items-center justify-between mb-4">
               <h4 className="font-medium text-slate-900">
@@ -118,7 +91,7 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, scenarioData, loading
                 <thead>
                   <tr className="border-b border-slate-200">
                     <th className="text-left py-3 px-4 font-medium text-slate-700">Date</th>
-                    {currencies.map(currency => (
+                    {SUPPORTED_CURRENCIES.map(currency => (
                       <th key={currency} className="text-right py-3 px-4 font-medium text-slate-700">
                         {currency}
                       </th>
@@ -140,7 +113,7 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, scenarioData, loading
                         <td className="py-3 px-4 text-sm font-medium text-slate-900">
                           {formatDate(date)}
                         </td>
-                        {currencies.map(currency => (
+                        {SUPPORTED_CURRENCIES.map(currency => (
                           <td key={currency} className="py-3 px-4 text-sm text-right text-slate-700">
                             {balances[currency] !== undefined ? (
                               <span className={balances[currency] === 0 ? 'text-slate-400' : ''}>
