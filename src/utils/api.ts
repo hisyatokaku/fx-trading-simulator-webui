@@ -1,6 +1,6 @@
 import { SessionInfo, SessionDetail, ScenarioData } from '../types/api';
 
-// Mock API data - used when API_BASE_URL is not configured
+// Mock API data used by the user123 demo account
 const mockSessionsData: Record<string, SessionInfo[]> = {
   'user123': [
     {
@@ -8,7 +8,7 @@ const mockSessionsData: Record<string, SessionInfo[]> = {
       startDate: "2016-01-04",
       endDate: "2016-01-11",
       jpyBalance: 1002842,
-      scenario: "TEST0",
+      scenario: "TEST0_MOCK",
       complete: false
     },
     {
@@ -16,7 +16,7 @@ const mockSessionsData: Record<string, SessionInfo[]> = {
       startDate: "2016-01-04",
       endDate: "2016-01-11",
       jpyBalance: 999945.7663383546,
-      scenario: "TEST0",
+      scenario: "TEST0_MOCK",
       complete: true
     },
     {
@@ -24,7 +24,7 @@ const mockSessionsData: Record<string, SessionInfo[]> = {
       startDate: "2016-01-12",
       endDate: "2016-01-19",
       jpyBalance: 1009073.56,
-      scenario: "TEST1",
+      scenario: "TEST1_MOCK",
       complete: true
     },
     {
@@ -32,7 +32,7 @@ const mockSessionsData: Record<string, SessionInfo[]> = {
       startDate: "2016-01-20",
       endDate: "2016-01-27",
       jpyBalance: 999999.43,
-      scenario: "TEST1",
+      scenario: "TEST1_MOCK",
       complete: true
     },
     {
@@ -40,7 +40,7 @@ const mockSessionsData: Record<string, SessionInfo[]> = {
       startDate: "2016-02-03",
       endDate: "2016-02-10",
       jpyBalance: 999945.43,
-      scenario: "EVAL0",
+      scenario: "EVAL0_MOCK",
       complete: true
     },
     {
@@ -48,7 +48,7 @@ const mockSessionsData: Record<string, SessionInfo[]> = {
       startDate: "2016-01-20",
       endDate: "2016-01-27",
       jpyBalance: 999999.43,
-      scenario: "TEST1",
+      scenario: "TEST1_MOCK",
       complete: true
     },
     {
@@ -56,7 +56,7 @@ const mockSessionsData: Record<string, SessionInfo[]> = {
       startDate: "2016-02-17",
       endDate: "2016-02-24",
       jpyBalance: 999819.43,
-      scenario: "EVAL1",
+      scenario: "EVAL1_MOCK",
       complete: true
     }
   ]
@@ -68,7 +68,7 @@ const mockSessionDetails: Record<number, SessionDetail> = {
     startDate: "2016-01-04",
     endDate: "2016-01-11",
     jpyBalance: 1002842,
-    scenario: "TEST0",
+    scenario: "TEST0_MOCK",
     dateToBalances: {
       "2016-01-04": { JPY: 1000000, EUR: 0, HKD: 0, USD: 0, AUD: 0 },
       "2016-01-05": { JPY: 998500, EUR: 0, HKD: 0, USD: 12.5, AUD: 8.2 },
@@ -83,7 +83,7 @@ const mockSessionDetails: Record<number, SessionDetail> = {
     startDate: "2016-01-04",
     endDate: "2016-01-11",
     jpyBalance: 999945.7663383546,
-    scenario: "TEST0",
+    scenario: "TEST0_MOCK",
     dateToBalances: {
       "2016-01-04": { JPY: 1000000, EUR: 0, HKD: 0, USD: 0, AUD: 0 },
       "2016-01-05": { JPY: 998000, EUR: 0, HKD: 0, USD: 8.30564784053156, AUD: 11.415525114155253 },
@@ -99,7 +99,7 @@ const mockSessionDetails: Record<number, SessionDetail> = {
     startDate: "2016-01-12",
     endDate: "2016-01-19",
     jpyBalance: 1009073.56,
-    scenario: "TEST1",
+    scenario: "TEST1_MOCK",
     dateToBalances: {
       "2016-01-12": { JPY: 1000000, EUR: 15.5, HKD: 0, USD: 0, AUD: 0 },
       "2016-01-13": { JPY: 998500, EUR: 31.2, HKD: 0, USD: 5.5, AUD: 0 },
@@ -114,7 +114,7 @@ const mockSessionDetails: Record<number, SessionDetail> = {
     startDate: "2016-01-20",
     endDate: "2016-01-27",
     jpyBalance: 999999.43,
-    scenario: "TEST1",
+    scenario: "TEST1_MOCK",
     dateToBalances: {
       "2016-01-20": { JPY: 1000000, EUR: 0, HKD: 12.5, USD: 0, AUD: 0 },
       "2016-01-21": { JPY: 998000, EUR: 8.2, HKD: 25.8, USD: 3.1, AUD: 0 },
@@ -129,7 +129,7 @@ const mockSessionDetails: Record<number, SessionDetail> = {
     startDate: "2016-02-03",
     endDate: "2016-02-10",
     jpyBalance: 999945.43,
-    scenario: "EVAL0",
+    scenario: "EVAL0_MOCK",
     dateToBalances: {
       "2016-02-03": { JPY: 1000000, EUR: 0, HKD: 0, USD: 0, AUD: 0 },
       "2016-02-04": { JPY: 998000, EUR: 0, HKD: 0, USD: 8.30564784053156, AUD: 11.415525114155253 },
@@ -145,7 +145,7 @@ const mockSessionDetails: Record<number, SessionDetail> = {
     startDate: "2016-01-20",
     endDate: "2016-01-27",
     jpyBalance: 999999.43,
-    scenario: "TEST1",
+    scenario: "TEST1_MOCK",
     dateToBalances: {
       "2016-01-20": { JPY: 1000000, EUR: 0, HKD: 25.0, USD: 0, AUD: 0 },
       "2016-01-21": { JPY: 996000, EUR: 16.4, HKD: 51.6, USD: 6.2, AUD: 0 },
@@ -160,7 +160,7 @@ const mockSessionDetails: Record<number, SessionDetail> = {
     startDate: "2016-02-17",
     endDate: "2016-02-24",
     jpyBalance: 999819.43,
-    scenario: "EVAL1",
+    scenario: "EVAL1_MOCK",
     dateToBalances: {
       "2016-02-17": { JPY: 1000000, EUR: 0, HKD: 0, USD: 0, AUD: 0 },
       "2016-02-18": { JPY: 998000, EUR: 0, HKD: 0, USD: 8.30564784053156, AUD: 11.415525114155253 },
@@ -174,7 +174,7 @@ const mockSessionDetails: Record<number, SessionDetail> = {
 };
 
 const mockScenarioData: Record<string, ScenarioData> = {
-  TEST0: {
+  TEST0_MOCK: {
     startDate: '2016-01-04',
     endDate: '2016-01-11',
     dateToCurrencyPairToRate: {
@@ -186,7 +186,7 @@ const mockScenarioData: Record<string, ScenarioData> = {
       '2016-01-11': { 'USD/JPY': 118.1, 'EUR/JPY': 129.0, 'AUD/JPY': 84.8, 'HKD/JPY': 15.15 },
     },
   },
-  TEST1: {
+  TEST1_MOCK: {
     startDate: '2016-01-12',
     endDate: '2016-01-27',
     dateToCurrencyPairToRate: {
@@ -202,7 +202,7 @@ const mockScenarioData: Record<string, ScenarioData> = {
       '2016-01-27': { 'USD/JPY': 118.8, 'EUR/JPY': 129.7, 'AUD/JPY': 85.5, 'HKD/JPY': 15.21 },
     },
   },
-  EVAL0: {
+  EVAL0_MOCK: {
     startDate: '2016-02-03',
     endDate: '2016-02-10',
     dateToCurrencyPairToRate: {
@@ -214,7 +214,7 @@ const mockScenarioData: Record<string, ScenarioData> = {
       '2016-02-10': { 'USD/JPY': 118.1, 'EUR/JPY': 129.0, 'AUD/JPY': 84.8, 'HKD/JPY': 15.15 },
     },
   },
-  EVAL1: {
+  EVAL1_MOCK: {
     startDate: '2016-02-17',
     endDate: '2016-02-24',
     dateToCurrencyPairToRate: {
@@ -284,7 +284,7 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
   // Check if API base URL is configured (empty string means use relative path)
   if (apiBaseUrl !== undefined) {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/trade/session/${sessionId}`);
+      const response = await fetch(`${apiBaseUrl}/api/trade/session/${sessionId}/history`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -296,6 +296,7 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
         jpy_balance: number | null;
         scenario_name: string | null;
         balances: Record<string, number>;
+        balance_history: Record<string, Record<string, number>>;
         is_complete: boolean;
       } = await response.json();
 
@@ -305,9 +306,7 @@ export const fetchSessionDetail = async (sessionId: number): Promise<SessionDeta
         endDate: session.end_datetime,
         jpyBalance: session.jpy_balance ?? 0,
         scenario: session.scenario_name ?? '',
-        dateToBalances: {
-          [session.current_datetime]: session.balances,
-        },
+        dateToBalances: session.balance_history,
         complete: session.is_complete,
       };
     } catch (error) {
@@ -331,11 +330,20 @@ export const fetchScenarioData = async (scenario: string): Promise<ScenarioData>
   if (apiBaseUrl !== undefined) {
     try {
       // Use API base URL (empty string = relative path for Netlify proxy)
-      const response = await fetch(`${apiBaseUrl}/api/trade/scenario/${scenario}`);
+      const response = await fetch(`${apiBaseUrl}/api/scenario/${encodeURIComponent(scenario)}/rates`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return await response.json();
+      const data: {
+        start_datetime: string;
+        end_datetime: string;
+        date_to_currency_pair_to_rate: Record<string, Record<string, number>>;
+      } = await response.json();
+      return {
+        startDate: data.start_datetime,
+        endDate: data.end_datetime,
+        dateToCurrencyPairToRate: data.date_to_currency_pair_to_rate,
+      };
     } catch (error) {
       console.warn('Failed to fetch from backend:', error);
       throw new Error(`Scenario ${scenario} not found`);
