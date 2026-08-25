@@ -1,6 +1,7 @@
 import React from 'react';
 import { SessionDetail, ScenarioData } from '../types/api';
 import { calculateJPYEquivalent, formatCurrency, SUPPORTED_CURRENCIES } from '../utils/currency';
+import { formatDateTimeUtc } from '../utils/datetime';
 
 interface AssetTableProps {
   sessions: SessionDetail[];
@@ -12,9 +13,8 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, scenarioData, loading
   // Get the most recent 2 sessions
   const recentSessions = sessions.slice(-2);
   
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  const formatDateTime = (dateStr: string) => {
+    return formatDateTimeUtc(dateStr);
   };
 
   // Calculate JPY equivalent total using FX rates
@@ -111,7 +111,7 @@ const AssetTable: React.FC<AssetTableProps> = ({ sessions, scenarioData, loading
                     return (
                       <tr key={date} className="border-b border-slate-100 hover:bg-slate-50">
                         <td className="py-3 px-4 text-sm font-medium text-slate-900">
-                          {formatDate(date)}
+                          {formatDateTime(date)}
                         </td>
                         {SUPPORTED_CURRENCIES.map(currency => (
                           <td key={currency} className="py-3 px-4 text-sm text-right text-slate-700">
