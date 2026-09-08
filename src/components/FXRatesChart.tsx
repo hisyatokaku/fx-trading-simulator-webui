@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import type { Data, Layout, Config } from 'plotly.js';
+import Plot from './Plot';
 import { ScenarioData } from '../types/api';
 import { Check, ChevronDown } from 'lucide-react';
 import { formatDateTimeUtc } from '../utils/datetime';
@@ -10,6 +11,8 @@ interface FXRatesChartProps {
   selectedScenario: string | null;
 }
 
+const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
+
 const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, selectedScenario }) => {
   const [selectedPairs, setSelectedPairs] = useState<string[]>(['USD/JPY', 'EUR/JPY']);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -19,8 +22,6 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
       setIsDropdownOpen(false);
     }
   }, [selectedScenario, scenarioData]);
-
-  const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
 
   // Check if current scenario should hide FX rates
   const hiddenScenarios = ['Feb_Apr_2017', 'Jun_Aug_2017'];
@@ -69,10 +70,10 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
     });
   }, [scenarioData, selectedPairs, shouldHideRates]);
 
-  // Calculate Y-axis domain with a rounded upper bound and zero start
-  const yAxisDomain = React.useMemo(() => {
+  // Calculate Y-axis range with a rounded upper bound and zero start
+  const yAxisRange = React.useMemo<[number, number] | null>(() => {
     if (chartData.length === 0 || selectedPairs.length === 0) {
-      return ['dataMin', 'dataMax'];
+      return null;
     }
 
     let min = Infinity;
@@ -89,23 +90,66 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
     });
 
     if (min === Infinity || max === -Infinity) {
-      return ['dataMin', 'dataMax'];
+      return null;
     }
 
     const range = max - min;
     const margin = range * 0.1;
-    const domainMin = Math.floor(min - margin);
-    const domainMax = Math.ceil(max + margin);
+    const rangeMin = Math.floor(min - margin);
+    const rangeMax = Math.ceil(max + margin);
 
-    return [domainMin, domainMax];
+    return [rangeMin, rangeMax];
   }, [chartData, selectedPairs]);
 
-  const formatDateTime = (dateStr: string) => {
-    return formatDateTimeUtc(dateStr);
-  };
+  const traces = React.useMemo<Data[]>(() => {
+    const x = chartData.map(dataPoint => formatDateTimeUtc(String(dataPoint.date)));
 
-  const formatRate = (value: number) => {
-    return value.toFixed(4);
+    return selectedPairs.map((pair, index) => {
+      const color = colors[index % colors.length];
+      return {
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: pair,
+        x,
+        y: chartData.map(dataPoint => {
+          const value = dataPoint[pair];
+          return typeof value === 'number' ? value : null;
+        }),
+        line: { color, width: 2, shape: 'linear' },
+        marker: { color, size: 6 },
+        hovertemplate: '%{y:.4f}<extra>%{fullData.name}</extra>',
+      };
+    });
+  }, [chartData, selectedPairs]);
+
+  const layout = React.useMemo<Partial<Layout>>(() => ({
+    autosize: true,
+    margin: { l: 60, r: 30, t: 10, b: 60 },
+    dragmode: 'zoom',
+    hovermode: 'x unified',
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    font: { family: 'ui-sans-serif, system-ui, sans-serif', size: 12, color: '#64748b' },
+    legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.25 },
+    xaxis: { type: 'date', gridcolor: '#e2e8f0', griddash: 'dash', linecolor: '#64748b', zeroline: false },
+    yaxis: {
+      tickformat: '.4f',
+      gridcolor: '#e2e8f0',
+      griddash: 'dash',
+      linecolor: '#64748b',
+      zeroline: false,
+      ...(yAxisRange ? { range: yAxisRange } : { autorange: true }),
+    },
+    // Keep the user's zoom when data updates for the same pairs
+    uirevision: `${selectedScenario ?? ''}|${selectedPairs.join(',')}`,
+  }), [yAxisRange, selectedScenario, selectedPairs]);
+
+  const config: Partial<Config> = {
+    responsive: true,
+    displaylogo: false,
+    scrollZoom: false,
+    doubleClick: 'reset',
+    modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d'],
   };
 
   const handlePairToggle = (pair: string) => {
@@ -209,48 +253,13 @@ const FXRatesChart: React.FC<FXRatesChartProps> = ({ scenarioData, loading, sele
             </div>
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis
-                dataKey="date"
-                tickFormatter={formatDateTime}
-                stroke="#64748b"
-                fontSize={12}
-              />
-              <YAxis
-                domain={yAxisDomain}
-                tickFormatter={formatRate}
-                stroke="#64748b"
-                fontSize={12}
-              />
-              <Tooltip
-                formatter={(value: number, name: string) => [
-                  formatRate(value),
-                  name
-                ]}
-                labelFormatter={(label) => `DateTime: ${formatDateTime(label)}`}
-                contentStyle={{
-                  backgroundColor: 'white',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <Legend />
-              {selectedPairs.map((pair, index) => (
-                <Line
-                  key={pair}
-                  type="monotone"
-                  dataKey={pair}
-                  stroke={colors[index % colors.length]}
-                  strokeWidth={2}
-                  dot={{ fill: colors[index % colors.length], strokeWidth: 2, r: 3 }}
-                  activeDot={{ r: 5, stroke: colors[index % colors.length], strokeWidth: 2 }}
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <Plot
+            data={traces}
+            layout={layout}
+            config={config}
+            useResizeHandler
+            style={{ width: '100%', height: '100%' }}
+          />
         )}
       </div>
     </div>
