@@ -2,7 +2,7 @@
 
 - Google Colab: https://colab.research.google.com/drive/1jhmx739GbguQnmwwpAgkfoBix9mcRycw?usp=sharing
 - UI 本番環境: https://fxapp.netlify.app/
-- UI PoC- https://fx-trading-simulator-webui.netlify.app/
+- UI PoC- https://fxapp.netlify.app/
 - WEB service - https://github.com/hisyatokaku/fx-trading-simulator-api/
 
 ![image](https://github.com/user-attachments/assets/031eb116-521e-46d0-a1a9-abe25b065feb)
@@ -22,7 +22,7 @@ Dockerアプリと、VS Codeと、VS CodeのDev Containers拡張機能が必要�
 # Netlifyデプロイ設定
 
 ## 本番環境（Netlify）
-- **Site URL**: https://fx-trading-simulator-webui.netlify.app/
+- **Site URL**: https://fxapp.netlify.app/
 - **Build command**: `npm run build`
 - **Publish directory**: `dist`
 - **Node version**: 18以上

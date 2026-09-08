@@ -1,7 +1,8 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import type { Data, Layout, Config } from 'plotly.js';
+import Plot from './Plot';
 import { SessionDetail, ScenarioData } from '../types/api';
-import { calculateJPYEquivalent, formatCurrency } from '../utils/currency';
+import { calculateJPYEquivalent } from '../utils/currency';
 import { formatDateTimeUtc } from '../utils/datetime';
 
 interface SessionChartProps {
@@ -10,9 +11,9 @@ interface SessionChartProps {
   loading: boolean;
 }
 
-const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loading }) => {
-  const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
+const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loading }) => {
   // Prepare chart data
   const chartData = React.useMemo(() => {
     if (sessions.length === 0 || !scenarioData) return [];
@@ -44,10 +45,10 @@ const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loa
     });
   }, [sessions, scenarioData]);
 
-  // Calculate Y-axis domain with a rounded upper bound and zero start
-  const yAxisDomain = React.useMemo(() => {
+  // Calculate Y-axis range with a rounded upper bound and zero start
+  const yAxisRange = React.useMemo<[number, number] | null>(() => {
     if (chartData.length === 0 || sessions.length === 0) {
-      return ['dataMin', 'dataMax'];
+      return null;
     }
 
     let min = Infinity;
@@ -64,19 +65,69 @@ const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loa
     });
 
     if (min === Infinity || max === -Infinity) {
-      return ['dataMin', 'dataMax'];
+      return null;
     }
 
     const range = max - min;
     const margin = range * 0.1;
-    const domainMin = Math.floor((min - margin) / 1000) * 1000;
-    const domainMax = Math.ceil((max + margin) / 1000) * 1000;
+    const rangeMin = Math.floor((min - margin) / 1000) * 1000;
+    const rangeMax = Math.ceil((max + margin) / 1000) * 1000;
 
-    return [domainMin, domainMax];
+    return [rangeMin, rangeMax];
   }, [chartData, sessions]);
 
-  const formatDateTime = (dateStr: string) => {
-    return formatDateTimeUtc(dateStr);
+  const traces = React.useMemo<Data[]>(() => {
+    const x = chartData.map(dataPoint => formatDateTimeUtc(String(dataPoint.date)));
+
+    return sessions.map((session, index) => {
+      const key = `Session ${session.sessionId}`;
+      const color = colors[index % colors.length];
+      return {
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: key,
+        x,
+        y: chartData.map(dataPoint => {
+          const value = dataPoint[key];
+          return typeof value === 'number' ? value : null;
+        }),
+        connectgaps: true,
+        line: { color, width: 2, shape: 'linear' },
+        marker: { color, size: 8 },
+        hovertemplate: '¥%{y:,.0f}<extra>%{fullData.name}</extra>',
+      };
+    });
+  }, [chartData, sessions]);
+
+  const layout = React.useMemo<Partial<Layout>>(() => ({
+    autosize: true,
+    margin: { l: 70, r: 30, t: 10, b: 60 },
+    dragmode: 'zoom',
+    hovermode: 'x unified',
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    font: { family: 'ui-sans-serif, system-ui, sans-serif', size: 12, color: '#64748b' },
+    legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2 },
+    xaxis: { type: 'date', gridcolor: '#e2e8f0', griddash: 'dash', linecolor: '#64748b', zeroline: false },
+    yaxis: {
+      tickprefix: '¥',
+      tickformat: ',.0f',
+      gridcolor: '#e2e8f0',
+      griddash: 'dash',
+      linecolor: '#64748b',
+      zeroline: false,
+      ...(yAxisRange ? { range: yAxisRange } : { autorange: true }),
+    },
+    // Keep the user's zoom when data updates for the same set of sessions
+    uirevision: sessions.map(session => session.sessionId).join(','),
+  }), [yAxisRange, sessions]);
+
+  const config: Partial<Config> = {
+    responsive: true,
+    displaylogo: false,
+    scrollZoom: false,
+    doubleClick: 'reset',
+    modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d'],
   };
 
   if (loading) {
@@ -106,49 +157,13 @@ const SessionChart: React.FC<SessionChartProps> = ({ sessions, scenarioData, loa
 
   return (
     <div className="h-96">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-          <XAxis 
-            dataKey="date" 
-            tickFormatter={formatDateTime}
-            stroke="#64748b"
-            fontSize={12}
-          />
-          <YAxis 
-            domain={yAxisDomain}
-            tickFormatter={(value) => `¥${(value / 1000).toFixed(0)}K`}
-            stroke="#64748b"
-            fontSize={12}
-          />
-          <Tooltip
-            formatter={(value: number, name: string) => [
-              formatCurrency(value, 'JPY'),
-              name
-            ]}
-            labelFormatter={(label) => `DateTime: ${formatDateTime(label)}`}
-            contentStyle={{
-              backgroundColor: 'white',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-            }}
-          />
-          <Legend />
-          {sessions.map((session, index) => (
-            <Line
-              key={session.sessionId}
-              type="monotone"
-              dataKey={`Session ${session.sessionId}`}
-              connectNulls
-              stroke={colors[index % colors.length]}
-              strokeWidth={2}
-              dot={{ fill: colors[index % colors.length], strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6, stroke: colors[index % colors.length], strokeWidth: 2 }}
-            />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
+      <Plot
+        data={traces}
+        layout={layout}
+        config={config}
+        useResizeHandler
+        style={{ width: '100%', height: '100%' }}
+      />
     </div>
   );
 };
