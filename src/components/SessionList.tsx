@@ -179,9 +179,13 @@ const SessionList: React.FC<SessionListProps> = ({
                             <div className="flex items-center gap-2">
                               <span className="font-semibold text-slate-900">Session {session.sessionId}</span>
                               {session.complete ? (
-                                <CheckCircle className="h-4 w-4 text-green-500" />
+                                <span title="Completed" aria-label="Completed">
+                                  <CheckCircle className="h-4 w-4 text-green-500" />
+                                </span>
                               ) : (
-                                <Clock className="h-4 w-4 text-amber-500" />
+                                <span title="Not Done" aria-label="Not Done">
+                                  <Clock className="h-4 w-4 text-amber-500" />
+                                </span>
                               )}
                             </div>
                             <div className="mt-2 flex items-center gap-2 text-sm text-slate-600">
